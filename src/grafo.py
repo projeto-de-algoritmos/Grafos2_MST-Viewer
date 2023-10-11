@@ -61,7 +61,14 @@ class InterfaceGrafica:
         # Adicionando evento de clique para desenhar nós
         self.grafo_canvas.mpl_connect("button_press_event", self.on_click)
 
+    def reset(self):
+        self.layout_original = None
+        self.grafo.clear()
+        self.arestas_originais = list(self.grafo.edges)
+        self.pos = {}  # Inicializamos como um dicionário vazio
+
     def criar_e_exibir_grafo(self):
+        self.reset()
         arestas_input = self.entrada_arestas.get()
         self.grafo = self.criar_grafo(arestas_input)
         self.layout_original = nx.spring_layout(self.grafo)
@@ -91,13 +98,15 @@ class InterfaceGrafica:
         nx.draw_networkx_edge_labels(
             self.grafo,
             self.pos,
+            horizontalalignment="center",
+            verticalalignment="bottom",
+            clip_on=False,
             edge_labels=edge_labels,
             font_color='red',
             ax=self.figura.gca(), 
         )
         
         self.grafo_canvas.draw()
-
 
     def exibir_mst(self):
         if hasattr(self, "grafo") and self.layout_original is not None:
@@ -146,8 +155,6 @@ class InterfaceGrafica:
             self.primeiro_no_selecionado = None
             self.exibir_grafo()
 
-
-
     def on_click(self, event):
         if self.desenhando:
             x, y = event.xdata, event.ydata
@@ -159,7 +166,7 @@ class InterfaceGrafica:
                     peso = int(peso_entrada) if peso_entrada.isdigit() else 1
                     self.conectar_nos(no_clicado, peso)
                 else:
-                    node_label = f"Nó {len(self.grafo.nodes) + 1}"
+                    node_label = f"{len(self.grafo.nodes) + 1}"
                     self.grafo.add_node(node_label, pos=(x, y))
                     self.pos[node_label] = (x, y)
                     self.exibir_grafo()
@@ -184,13 +191,19 @@ class InterfaceGrafica:
     # Adicione este método à classe InterfaceGrafica
     def remover_no(self):
         if not self.desenhando:
-            tk.messagebox.showwarning("Aviso", "Termine a edição antes de remover nós.")
+            tk.messagebox.showwarning("Aviso", "Comece a edição antes de remover nós.")
             return
 
         # Abra uma janela para que o usuário insira o nó a ser removido
         no_a_remover = simpledialog.askstring("Remover Nó", "Insira o rótulo do nó a ser removido:")
 
         if no_a_remover:
+            if(self.obter_arestas_do_no(no_a_remover)):
+                arestas_remover = self.obter_arestas_do_no(no_a_remover)
+                self.grafo.remove_edges_from(arestas_remover)
+                # Atualizar a lista de arestas originais
+                self.arestas_originais = list(self.grafo.edges())
+
             # Remova o nó e suas arestas do grafo
             self.grafo.remove_node(no_a_remover)
 
@@ -201,6 +214,14 @@ class InterfaceGrafica:
             # Atualize a exibição do grafo
             self.exibir_grafo()
 
+    def obter_arestas_do_no(self, no):
+        if no in self.grafo.nodes:
+            arestas_do_no = list(self.grafo.edges(no))
+            print(f"Arestas do nó {no}: {arestas_do_no}")
+            return arestas_do_no
+        else:
+            print(f"O nó {no} não existe no grafo.")
+            return None
 
 
     def criar_grafo(self, arestas_input):
