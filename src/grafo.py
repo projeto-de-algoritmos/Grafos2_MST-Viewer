@@ -27,6 +27,13 @@ class InterfaceGrafica:
         self.entrada_arestas = ttk.Entry(self.janela, width=40)
         self.entrada_arestas.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
 
+        self.rotulo_peso = ttk.Label(self.janela, text="Peso da Aresta:")
+        self.rotulo_peso.grid(row=5, column=0, columnspan=2, pady=5)
+
+        self.entrada_peso = ttk.Entry(self.janela, width=10)
+        self.entrada_peso.grid(row=6, column=0, columnspan=2, pady=5)
+
+
         # Botão para criar o grafo e exibir
         self.botao_criar_grafo = ttk.Button(
             self.janela, text="Criar Grafo e Exibir", command=self.criar_e_exibir_grafo
@@ -72,7 +79,20 @@ class InterfaceGrafica:
             edge_color="black",
             ax=self.figura.add_subplot(111),
         )
+        
+        # Desenhar labels de arestas
+        edge_labels = nx.get_edge_attributes(self.grafo, 'weight')
+        nx.draw_networkx_edge_labels(
+            self.grafo,
+            self.pos,
+            edge_labels=edge_labels,
+            font_color='red',
+            ax=self.figura.gca(), 
+        )
+        
         self.grafo_canvas.draw()
+
+
 
     def exibir_mst(self):
         if hasattr(self, "grafo") and self.layout_original is not None:
@@ -107,50 +127,52 @@ class InterfaceGrafica:
                         return node
         return None
 
-    def conectar_nos(self, no_selecionado):
+    def conectar_nos(self, no_selecionado, peso):
         if self.primeiro_no_selecionado is None:
             self.primeiro_no_selecionado = no_selecionado
         else:
             segundo_no_selecionado = no_selecionado
             self.grafo.add_edge(
-                self.primeiro_no_selecionado, segundo_no_selecionado, weight=1
+                self.primeiro_no_selecionado, segundo_no_selecionado, weight=peso
             )
             self.arestas_originais.append(
-                (self.primeiro_no_selecionado, segundo_no_selecionado)
+                (self.primeiro_no_selecionado, segundo_no_selecionado, peso)
             )
             self.primeiro_no_selecionado = None
             self.exibir_grafo()
+
+
 
     def on_click(self, event):
         if self.desenhando:
             x, y = event.xdata, event.ydata
             if x is not None and y is not None:
-                # Verificar se o usuário clicou em algum nó existente
                 no_clicado = self.encontrar_no_clicado(event)
                 
                 if no_clicado is not None:
-                    # O usuário clicou em um nó existente
-                    self.conectar_nos(no_clicado)
+                    peso_entrada = self.entrada_peso.get()
+                    peso = int(peso_entrada) if peso_entrada.isdigit() else 1
+                    self.conectar_nos(no_clicado, peso)
                 else:
-                    # O usuário clicou em um local vazio, então cria um novo nó
                     node_label = f"Nó {len(self.grafo.nodes) + 1}"
                     self.grafo.add_node(node_label, pos=(x, y))
                     self.pos[node_label] = (x, y)
                     self.exibir_grafo()
                     
-                    # Agora, conectamos os nós apenas se o primeiro nó já estiver selecionado
                     if self.primeiro_no_selecionado is not None:
                         segundo_no_selecionado = node_label
+                        peso_entrada = self.entrada_peso.get()
+                        peso = int(peso_entrada) if peso_entrada.isdigit() else 1
                         self.grafo.add_edge(
-                            self.primeiro_no_selecionado, segundo_no_selecionado, weight=1
+                            self.primeiro_no_selecionado,
+                            segundo_no_selecionado,
+                            weight=peso
                         )
                         self.arestas_originais.append(
                             (self.primeiro_no_selecionado, segundo_no_selecionado)
                         )
                         self.primeiro_no_selecionado = None
                         self.exibir_grafo()
-                    
-                    # Se o primeiro nó não estiver selecionado, definimos o nó atual como o primeiro
                     else:
                         self.primeiro_no_selecionado = node_label
 
