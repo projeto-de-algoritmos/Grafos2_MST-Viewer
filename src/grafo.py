@@ -1,6 +1,7 @@
 import networkx as nx
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog, messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -33,6 +34,11 @@ class InterfaceGrafica:
         self.entrada_peso = ttk.Entry(self.janela, width=10)
         self.entrada_peso.grid(row=6, column=0, columnspan=2, pady=5)
 
+        # Botão para remover um nó do grafo
+        self.botao_remover_no = ttk.Button(
+            self.janela, text="Remover Nó", command=self.remover_no
+        )
+        self.botao_remover_no.grid(row=5, column=0, columnspan=2, pady=10)
 
         # Botão para criar o grafo e exibir
         self.botao_criar_grafo = ttk.Button(
@@ -91,7 +97,6 @@ class InterfaceGrafica:
         )
         
         self.grafo_canvas.draw()
-
 
 
     def exibir_mst(self):
@@ -176,6 +181,25 @@ class InterfaceGrafica:
                     else:
                         self.primeiro_no_selecionado = node_label
 
+    # Adicione este método à classe InterfaceGrafica
+    def remover_no(self):
+        if not self.desenhando:
+            tk.messagebox.showwarning("Aviso", "Termine a edição antes de remover nós.")
+            return
+
+        # Abra uma janela para que o usuário insira o nó a ser removido
+        no_a_remover = simpledialog.askstring("Remover Nó", "Insira o rótulo do nó a ser removido:")
+
+        if no_a_remover:
+            # Remova o nó e suas arestas do grafo
+            self.grafo.remove_node(no_a_remover)
+
+            # Remova o nó da posição
+            if self.pos and no_a_remover in self.pos:
+                del self.pos[no_a_remover]
+
+            # Atualize a exibição do grafo
+            self.exibir_grafo()
 
 
 

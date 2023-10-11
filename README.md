@@ -1,7 +1,9 @@
-# Maze Solver
+# MST Visualizer
+
+[Vídeo de apresentação]()
 
 **Número da Lista**: 1<br>
-**Conteúdo da Disciplina**: Grafos 1<br>
+**Conteúdo da Disciplina**: Grafos 2<br>
 
 ## Alunos
 
@@ -12,12 +14,14 @@
 
 ## Sobre
 
-O projeto Maze Solver é o primeiro trabalho da dupla para a disciplina de Projeto de Algoritmos e remete ao conteúdo dos métodos de travessia de grafos.
-O objetivo do projeto é criar um algoritmo que resolva um labirinto gerado pelo projeto [Kruskal Maze Generator](https://github.com/projeto-de-algoritmos/Grafos2_KruskalMazeGenerator) realizado por outros alunos, no passado, para essa mesma disciplina. O algoritmo deve usar métodos de travessia de grafos para, ao iniciar na entrada, encontrar o caminho para a saída desse labirinto.
+O projeto MST Visualizer é o segundo trabalho da dupla para a disciplina de Projeto de Algoritmos e remete ao segundo conteúdo dos métodos de travessia de grafos abrangendo Djikistra, Prim e Kruskal.
+O objetivo do projeto é criar uma janela interativa onde o usuário pode criar grafos e tentar desenhar a MST ou pedir para o aplicativo gerar a MST desse grafo utilizando um dos algoritmos aprendidos em sala de aula (Prim ou Kruskal). O aplicativo cria grafos aleatórios baseado nas conexões e pesos descritas por texto pelo usuário, permite que o usuário crie os nós e os conecte com o clique do mouse, permite que o usuário clique nas arestas para desenhar a MST, e gera a MST do grafo desenhado na tela.
 
 ## Screenshots
 
-Adicione 3 ou mais screenshots do projeto em funcionamento.
+![1](assets/image-2.png)
+![2](assets/image.png)
+![3](assets/image-1.png)
 
 ## Instalação
 
@@ -41,21 +45,9 @@ ou
 
 `$ python3 src/main.py`
 
-##### Pegue o link do gradio
-
-Exemplo:http://127.0.0.1:7860
-
 ## Uso
 
 Na interface do gradio:
 
 1.  Escolha um dos exemplos na parte dos examples abaixo de "Clear" e "Submit" ou arraste um dos labirintos gerados pelo projeto [Kruskal Maze Generator](https://github.com/projeto-de-algoritmos/Grafos2_KruskalMazeGenerator) à janela de upload ou clique na janela de upload e suba um labirinto feito pelo mesmo projeto mencionado
 2.  Clique em "Submit" e espere o aplicativo resolver seu labirinto!
-
-## Outros
-
-Quaisquer outras informações sobre seu projeto podem ser descritas abaixo.
-
-```
-
-```
