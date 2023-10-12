@@ -1,1 +1,7 @@
+Exemplos de entrada para gerar grafos:
+
+Conectado:
 A B 2, A C 3, B C 2, C D 5, B D 3, B E 5, C E 2, E F 1, D F 2
+
+Desconectado:
+A B 1, C D 2, E F 3, G H 4, I J 5, K L 6
