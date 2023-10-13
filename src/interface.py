@@ -11,7 +11,7 @@ from grafo import Grafo
 class InterfaceGrafica:
     grafo: Grafo
     small_pad = 10
-    medium_pad = 20
+    medium_pad = 15
     node_color = "skyblue"
     font_color = "black"
     edge_color = "black"
@@ -30,55 +30,75 @@ class InterfaceGrafica:
         self.style.configure("Custom.TFrame", background="lightgray")
         self.criar_widgets()
 
-    def criar_widgets(self):
-        janela_esq = ttk.Frame(self.root)
-        janela_esq.pack(side="left", padx=self.small_pad, pady=self.small_pad, expand=True)
+    def criar_janelas(self):
+        esquerda = ttk.Frame(self.root)
+        esquerda.pack(side="left", padx=self.small_pad, pady=self.small_pad, expand=True)
 
-        janela_dir = ttk.Frame(self.root, height=400, width=650, style="Custom.TFrame")
-        janela_dir.pack(side="right", padx=self.small_pad, pady=self.small_pad, expand=True)
+        direita = ttk.Frame(self.root, height=400, width=650, style="Custom.TFrame")
+        direita.pack(side="right", padx=self.small_pad, pady=self.small_pad, expand=True)
 
-        # Widgets de inserir arestas -------------------------------------------------------------------
-        arestas_rotulo = ttk.Label(janela_esq, text="Insira as arestas: (Ex: nó1 nó2 peso, ...)")
-        arestas_rotulo.pack()
+        return esquerda, direita
 
-        self.arestas_entrada = ttk.Entry(janela_esq, width=40)
-        self.arestas_entrada.pack(pady=self.small_pad)
-
-        arestas_botao = ttk.Button(janela_esq, text="Inserir", command=self.criar_grafo)
-        arestas_botao.pack()
-
-        spacer = tk.Label(janela_esq, text="", height=2)
-        spacer.pack()
-
-        # Widgets de remover nó ------------------------------------------------------------------------------
-        remove_rotulo = ttk.Label(janela_esq, text="Insira o nó que deseja remover:")
-        remove_rotulo.pack()
+    def inserir_widget(self, janela: ttk.Frame, args: dict):
+        rotulo = ttk.Label(janela, text=args["rotulo"])
+        rotulo.pack()
         
-        self.remove_entrada = ttk.Entry(janela_esq)
-        self.remove_entrada.pack(pady=self.small_pad)
+        entrada = ttk.Entry(janela, width=args["entrada"])
+        entrada.pack(pady=self.small_pad)
 
-        remove_botao = ttk.Button(janela_esq, text="Remover", command=self.remover_no)
-        remove_botao.pack()
-
-        spacer = tk.Label(janela_esq, text="", height=2)
+        if "botao" in args:
+            botao = ttk.Button(janela, text=args["botao"], command=args["comando_botao"])
+            botao.pack()
+        
+        spacer = tk.Label(janela, text="", height=args["espacamento"])
         spacer.pack()
+
+        return entrada 
+        
+    def criar_widgets(self):
+        janela_esq, janela_dir = self.criar_janelas()
+
+        # Widget de inserir arestas ----------------------------------------------------------------------
+        inserir_arestas = {
+            "rotulo": "Insira as arestas: (Ex: nó1 nó2 peso, ...)", 
+            "entrada": 40, 
+            "botao": "Inserir",
+            "comando_botao": self.criar_grafo,
+            "espacamento": 2,
+        }
+        self.arestas_entrada = self.inserir_widget(janela_esq, inserir_arestas)
+
+        # Widget de remover nó --------------------------------------------------------------------------
+        remover_no = {
+            "rotulo": "Insira o nó que deseja remover:",
+            "entrada": 15,
+            "botao": "Remover",
+            "comando_botao": self.remover_no,
+            "espacamento": 2,
+        }
+        self.remove_entrada = self.inserir_widget(janela_esq, remover_no)
 
         # Widgets de peso ------------------------------------------------------------------------------
-        peso_rotulo = ttk.Label(janela_esq, text="Insira o peso da aresta:")
-        peso_rotulo.pack()
-        
-        self.peso_entrada = ttk.Entry(janela_esq)
-        self.peso_entrada.pack(pady=self.small_pad)
-
-        spacer = tk.Label(janela_esq, text="", height=1)
-        spacer.pack()
+        escolher_peso = {
+            "rotulo": "Insira o peso da aresta:",
+            "entrada": 15,
+            "espacamento": 1,
+        }
+        self.peso_entrada = self.inserir_widget(janela_esq, escolher_peso)
 
         # Widget da MST --------------------------------------------------------------------------------
         separator = tk.Frame(janela_esq, bd=10, relief='sunken', height=2, background='black')
         separator.pack(side='top', fill='x')
 
-        mst_botao = ttk.Button(janela_esq, text="Gerar MST",  command=self.exibir_mst, bootstyle="danger")
-        mst_botao.pack(pady=self.small_pad)
+        botao_frame = ttk.Frame(janela_esq)
+        botao_frame.pack(pady=self.small_pad)
+
+        limpar_botao = ttk.Button(botao_frame, text="Limpar",  command=self.reset, bootstyle="danger")
+        limpar_botao.pack(side= "left", padx=self.small_pad, fill="both", expand=True)
+
+        mst_botao = ttk.Button(botao_frame, text="Gerar MST",  command=self.exibir_mst, bootstyle="success")
+        mst_botao.pack(side= "left", padx=self.small_pad, fill="both", expand=True)
+
 
         # Widget da Figura --------------------------------------------------------------------------------
         self.figura = Figure(figsize=(5, 4), dpi=100)
@@ -86,10 +106,19 @@ class InterfaceGrafica:
         self.grafo_canvas_widget = self.grafo_canvas.get_tk_widget()
         self.grafo_canvas_widget.pack(padx=10, pady=10)
 
-    def criar_grafo(self):
+    def reset(self):
         self.grafo.reset()
-        self.grafo.criar_grafo(self.arestas_entrada.get().split(','))
         self.exibir_grafo()
+
+    def criar_grafo(self):
+        if self.arestas_entrada.get():
+            if self.grafo.criar_grafo(self.arestas_entrada.get().split(',')):
+                self.exibir_grafo()
+                self.arestas_entrada.delete(0, "end")
+            else:
+                tk.messagebox.showwarning(
+                    "Aviso", "O peso deve ser um número inteiro."
+                )
 
     def exibir_grafo(self):
         self.figura.clear()
@@ -125,23 +154,30 @@ class InterfaceGrafica:
         self.grafo_canvas.draw()
 
     def exibir_mst(self):
-        # TODO: implementar manualmente e checar se o grafo é conectado
         if self.grafo.pos:
-            mst = self.grafo.criar_mst()
-            nx.draw(
-                G=mst,
-                pos=self.grafo.pos,
-                with_labels=True,
-                font_weight=self.font_color,
-                node_size=self.node_size,
-                node_color=self.node_color,
-                font_color=self.font_color,
-                edgelist=list(mst.edges()),
-                width=self.edge_width,
-                edge_color=self.mst_edge_color,
-                ax=self.figura.add_subplot(111),
-            )
-            self.grafo_canvas.draw()
+            if nx.is_connected(self.grafo.grafo):
+                mst, peso_total = self.grafo.criar_mst()
+                nx.draw(
+                    G=mst,
+                    pos=self.grafo.pos,
+                    with_labels=True,
+                    font_weight=self.font_color,
+                    node_size=self.node_size,
+                    node_color=self.node_color,
+                    font_color=self.font_color,
+                    edgelist=list(mst.edges()),
+                    width=self.edge_width,
+                    edge_color=self.mst_edge_color,
+                    ax=self.figura.add_subplot(111),
+                )
+                self.grafo_canvas.draw()
+                tk.messagebox.showinfo(
+                    "Sucesso", f"Soma dos pesos das arestas utilizadas: {peso_total}"
+                )  
+            else:
+                tk.messagebox.showwarning(
+                "Aviso", "Para gerar uma MST, o grafo deve ser conectado."
+            )  
         else:
             tk.messagebox.showwarning(
                 "Aviso", "Crie um grafo antes de exibir a MST."
@@ -211,5 +247,15 @@ class InterfaceGrafica:
 
         if self.grafo.pos and no_a_remover in self.grafo.pos:
             del self.grafo.pos[no_a_remover]
+            self.remove_entrada.delete(0, "end")
+        else:
+            tk.messagebox.showwarning(
+                "Aviso", "O nó deve estar presente no grafo."
+            )
 
         self.exibir_grafo()
+
+# apenas para debug 
+root = tk.Tk()
+app = InterfaceGrafica(root)
+root.mainloop()
