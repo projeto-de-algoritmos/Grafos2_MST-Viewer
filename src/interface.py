@@ -78,14 +78,6 @@ class InterfaceGrafica:
         }
         self.remove_entrada = self.inserir_widget(janela_esq, remover_no)
 
-        # Widgets de peso ------------------------------------------------------------------------------
-        escolher_peso = {
-            "rotulo": "Insira o peso da aresta:",
-            "entrada": 15,
-            "espacamento": 1,
-        }
-        self.peso_entrada = self.inserir_widget(janela_esq, escolher_peso)
-
         # Widget da MST --------------------------------------------------------------------------------
         separator = tk.Frame(janela_esq, bd=10, relief='sunken', height=2, background='black')
         separator.pack(side='top', fill='x')
@@ -183,63 +175,6 @@ class InterfaceGrafica:
                 "Aviso", "Crie um grafo antes de exibir a MST."
             )   
 
-    def encontrar_no_clicado(self, event):
-        if self.grafo.pos is not None:
-            x, y = event.xdata, event.ydata
-            if x is not None and y is not None:
-                for node, pos in self.grafo.pos.items():
-                    node_x, node_y = pos
-                    # Vamos considerar que o nó tem um raio de 0.1 para clique
-                    if (x - node_x) ** 2 + (y - node_y) ** 2 <= 0.1 ** 2:
-                        return node
-        return None
-
-    def conectar_nos(self, no_selecionado, peso):
-        if self.primeiro_no_selecionado is None:
-            self.primeiro_no_selecionado = no_selecionado
-        else:
-            segundo_no_selecionado = no_selecionado
-            self.grafo.add_edge(
-                self.primeiro_no_selecionado, segundo_no_selecionado, weight=peso
-            )
-            self.grafo.get_arestas().append(
-                (self.primeiro_no_selecionado, segundo_no_selecionado, peso)
-            )
-            self.primeiro_no_selecionado = None
-            self.exibir_grafo()
-
-    def on_click(self, event):
-        x, y = event.xdata, event.ydata
-        if x is not None and y is not None:
-            no_clicado = self.encontrar_no_clicado(event)
-            
-            if no_clicado is not None:
-                peso_entrada = self.peso_entrada.get()
-                peso = int(peso_entrada) if peso_entrada.isdigit() else 1
-                self.conectar_nos(no_clicado, peso)
-            else:
-                node_label = f"{len(self.grafo.nodes) + 1}"
-                self.grafo.add_node(node_label, pos=(x, y))
-                self.grafo.pos[node_label] = (x, y)
-                self.exibir_grafo()
-                
-                if self.primeiro_no_selecionado is not None:
-                    segundo_no_selecionado = node_label
-                    peso_entrada = self.peso_entrada.get()
-                    peso = int(peso_entrada) if peso_entrada.isdigit() else 1
-                    self.grafo.add_edge(
-                        self.primeiro_no_selecionado,
-                        segundo_no_selecionado,
-                        weight=peso
-                    )
-                    self.grafo.get_arestas().append(
-                        (self.primeiro_no_selecionado, segundo_no_selecionado)
-                    )
-                    self.primeiro_no_selecionado = None
-                    self.exibir_grafo()
-                else:
-                    self.primeiro_no_selecionado = node_label
-   
     def remover_no(self):
         no_a_remover = self.remove_entrada.get()
 
@@ -254,8 +189,3 @@ class InterfaceGrafica:
             )
 
         self.exibir_grafo()
-
-# apenas para debug 
-root = tk.Tk()
-app = InterfaceGrafica(root)
-root.mainloop()
