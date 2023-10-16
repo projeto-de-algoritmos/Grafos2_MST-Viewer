@@ -84,14 +84,6 @@ class InterfaceGrafica:
         }
         self.remove_entrada = self.inserir_widget(janela_esq, remover_no)
 
-        # Widgets de peso ------------------------------------------------------------------------------
-        escolher_peso = {
-            "rotulo": "Insira o peso da aresta:",
-            "entrada": 15,
-            "espacamento": 1,
-        }
-        self.peso_entrada = self.inserir_widget(janela_esq, escolher_peso)
-
         # Widget da MST --------------------------------------------------------------------------------
         separator = tk.Frame(
             janela_esq, bd=10, relief="sunken", height=2, background="black"
