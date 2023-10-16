@@ -15,13 +15,13 @@
 ## Sobre
 
 O projeto MST Visualizer é o segundo trabalho da dupla para a disciplina de Projeto de Algoritmos e remete ao segundo conteúdo dos métodos de travessia de grafos abrangendo Djikistra, Prim e Kruskal.
-O objetivo do projeto é criar uma janela interativa onde o usuário pode criar grafos e tentar desenhar a MST ou pedir para o aplicativo gerar a MST desse grafo utilizando um dos algoritmos aprendidos em sala de aula (Prim ou Kruskal). O aplicativo cria grafos aleatórios baseado nas conexões e pesos descritas por texto pelo usuário, permite que o usuário crie os nós e os conecte com o clique do mouse, permite que o usuário clique nas arestas para desenhar a MST, e gera a MST do grafo desenhado na tela.
+O objetivo do projeto é criar uma janela interativa onde o usuário pode criar e visualizar grafos, além de gerar a MST desse grafo utilizando o algoritmo de Prim. O aplicativo cria um grafo baseado nas conexões e pesos descritas por texto pelo usuário, e também permite que o usuário crie os nós e os conecte com o clique do mouse, e por fim gera a MST do grafo desenhado na tela.
 
 ## Screenshots
 
-![1](assets/image-2.png)
-![2](assets/image.png)
-![3](assets/image-1.png)
+![1](assets/1.png)
+![2](assets/2.png)
+![3](assets/3.png)
 
 ## Instalação
 
@@ -33,7 +33,7 @@ O objetivo do projeto é criar uma janela interativa onde o usuário pode criar 
 
 ##### Entre no ambiente virtual
 
-`$ . venv/bin/activate`
+`$ ./venv/bin/activate`
 ou
 ` .\venv\Script\activate`
 
@@ -47,7 +47,7 @@ ou
 
 ## Uso
 
-Na interface do gradio:
-
-1.  Escolha um dos exemplos na parte dos examples abaixo de "Clear" e "Submit" ou arraste um dos labirintos gerados pelo projeto [Kruskal Maze Generator](https://github.com/projeto-de-algoritmos/Grafos2_KruskalMazeGenerator) à janela de upload ou clique na janela de upload e suba um labirinto feito pelo mesmo projeto mencionado
-2.  Clique em "Submit" e espere o aplicativo resolver seu labirinto!
+1. Digite as arestas do grafo desejado na seguinte maneira: `A B 2, A C 3, B C 2, C D 5, B D 3, B E 5, C E 2, E F 1, D F 2`
+2. Após gerado, é possível clicar em espaços em branco na figura para gerar novos nós, e em 2 nós para gerar uma aresta. O peso da aresta é definido no campo de texto "Insira o peso da aresta", e caso vazio, insere com o peso igual a 1.
+3. É possível também remover um nó digitando o rótulo dele na caixa de texto "Insira o nó que deseja remover" e clicando no botão.
+4. Por fim temos os botões Limpar, que apaga o grafo, e gerar MST, que mostra a árvore geradora mínima.
